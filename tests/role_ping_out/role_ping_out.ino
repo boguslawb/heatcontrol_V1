@@ -14,18 +14,12 @@
  
 #include <SPI.h>
 #include "RF24.h"
-#include <LiquidCrystal.h>
-#include <NettigoKeypad.h>
 #include "printf.h"
 
 
 RF24 radio(9,10);
 
 
-NG_Keypad keypad;
-
-
-LiquidCrystal lcd(7, 8, A2, A3, 6, 5);
 
                                                                            // Topology
 byte addresses[][6] = {"1Node","2Node"};              // Radio pipe addresses for the 2 nodes to communicate.
@@ -38,12 +32,6 @@ char bufferz[33] = "12345678901234567890123456789012";
 char bufferx[33];
 
 void setup(){
-  lcd.begin(16,2);
-  lcd.clear();
-  lcd.home();
-  lcd.print(F("Initialization..."));
-  keypad.register_handler(NG_Keypad::SELECT, select_was_pressed); 
-  delay(1000); 
   Serial.begin(115200);
   Serial.println(F(">>>>>>>>  ping out role <<<<<<<"));
   Serial.println(" ");
@@ -52,8 +40,8 @@ void setup(){
   // Setup and configure radio
 
   radio.begin();
-  //radio.setDataRate(RF24_250KBPS);
-  radio.setDataRate(RF24_2MBPS);  
+  radio.setDataRate(RF24_250KBPS);
+  //radio.setDataRate(RF24_2MBPS);  
   radio.setRetries(15,15);
   radio.enableAckPayload();                     // Allow optional ack payloads
   radio.enableDynamicPayloads();                // Ack payloads are dynamic payloads
@@ -90,11 +78,6 @@ void loop(void) {
                 unsigned long timer = micros();
 
 
-                lcd.setCursor(0,0);
-                lcd.print(F("  round-trip:  "));
-                lcd.setCursor(0,1);
-                lcd.print(timer-time);
-                lcd.print("  us   ");
 
                 Serial.print(F("Got response "));
                 Serial.print(gotByte);
@@ -111,34 +94,7 @@ void loop(void) {
         }
     
     }else{        Serial.println(F("Sending failed."));           // If no ack response, sending failed
-                  lcd.clear();
-                  lcd.setCursor(0,0);
-                  lcd.print(F("Sending failed")); 
-    }
-    rd = analogRead(0);
-    keypad.check_handlers(rd);
-    delay(500);  // Try again later
+   }
  }
-
-
-void select_was_pressed() {
-    if (radio.getDataRate()==RF24_2MBPS) 
-    {
-      radio.setDataRate(RF24_250KBPS);
-      lcd.clear();
-      lcd.print("250KBPS");
-    }
-    else
-    {
-      radio.setDataRate(RF24_2MBPS); 
-      lcd.clear();
-      lcd.print("2MBPS");
-    }
-    delay(1000);
-
-  
-}
-
-
 
 
