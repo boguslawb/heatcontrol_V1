@@ -13,15 +13,15 @@
  */
  
 #include <SPI.h>
-//#include <DigitalIO.h>
+#include <DigitalIO.h>
 #include "RF24.h"
 #include "printf.h"
 
 
 
 
-//RF24 radio(5,6);
-RF24 radio(9,10);
+RF24 radio(5,6);
+
 
                                                                            // Topology
 byte addresses[][6] = {"1Node","2Node"};              // Radio pipe addresses for the 2 nodes to communicate.
